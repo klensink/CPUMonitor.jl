@@ -1,5 +1,13 @@
 module CPUMonitor
+    
+    # Modules
 
-# package code goes here
+    # Types
+    include("CPUStat.jl")
 
-end # module
+    #Functions 
+    include("monitor.jl")
+    include("track.jl")
+    include("parselog.jl")
+
+end
