@@ -37,7 +37,7 @@ The `username` argument will restrict the monitor to processes from a user.
      CPUMonitor.CPUStat(13054, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]) 
      CPUMonitor.CPUStat(13055, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]) 
 
-[[ex_1.png]]
+[ex_1.png](https://github.com/klensink/CPUMonitor.jl/blob/master/ex_1.png)
 
 Inorder to have something to monitor, define a function to be evaluated on each `worker`.
 
