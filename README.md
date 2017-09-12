@@ -21,34 +21,32 @@ Otherwise run:
 ## Example
 -----
 
-The monitor requires it's own process, so start an additional instance of Julia on the same host as the processes you wish to track. This process will be reffered to as the `monitoring process`, and the processes being tracked will be referred to as the `workers`. The following example uses 4 `workers` and 1 `monitoring process`.
+The monitor requires it's own process, so start an additional instance of Julia on the same host as the processes you wish to track. SLIM users can do this by SSHing onto the same node as your workers. For example `ssh n038`. This process will be reffered to as the `monitoring process`, and the processes being tracked will be referred to as the `workers`. The following example uses 4 `workers` and 1 `monitoring process`.
 
-The `username` argument will restrict the monitor to processes from a user.
+The `username` argument will restrict the monitor to processes owned by a certain user. The optional argument `iterations` sets how many samples will be taken, and `delay` sets the approximate sample interval. 
 
-    julia> stats = monitor("klensink")
-    CPUMonitor: Begin Tracking...
-    CPUMonitor: End Tracking...
-    CPUMonitor: Begin Parsing Log...
-    CPUMonitor: End Parsing Log...
-    5-element Array{CPUMonitor.CPUStat,1}:
-     CPUMonitor.CPUStat(20277, [13.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
-     CPUMonitor.CPUStat(12885, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]) 
-     CPUMonitor.CPUStat(13032, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]) 
-     CPUMonitor.CPUStat(13054, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]) 
-     CPUMonitor.CPUStat(13055, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]) 
+Inorder to have something to monitor, define a function to be evaluated on the `working process`.
 
-![ex_1.png](https://github.com/klensink/CPUMonitor.jl/blob/master/ex_1.png)
+    julia> addprocs(4)
+    julia> @everywhere busy_work(x) = sum(norm(fft(rand(x)))) 
 
-Inorder to have something to monitor, define a function to be evaluated on each `worker`.
+Start a monitoring session on the machine, using the `monitoring process`.
 
+    julia> stats = monitor("klensink", iterations = 100, delay = 0.05, command = "julia", verbose = true)
 
-    julia> @everywhere busy_work(x) = sum(norm(fft(rand(x))))
+Then do some work on the same machine, so there is something to measure on the `working process`.
 
+    julia> pmap(busy_work, Array(10000:15000))
 
+The monitor returns a `CPUStat` object for each process of the machine. Each `CPUStat` contains the process ID, the CPU use data, and the memory use data.
 
+Plot the results to get an idea of how the CPU statistics vary over time.
 
+    julia> using PyPlot
 
+    julia> [plot(stats[i].cpu) for i in 1:length(stats)]
 
+![ex_1](ex_1.png)
 
 
 
