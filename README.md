@@ -12,11 +12,11 @@ The returned memory values are defined as : *A task's currently used share of av
 
 CPUMonitor can be installed using the Julia package manager. If you have a Github account, run the following from the Julia REPL:
 
-    https://github.com/klensink/CPUMonitor.jl.git
+    Pkg.clone("https://github.com/klensink/CPUMonitor.jl.git")
 
 Otherwise run:
 
-    git@github.com:klensink/CPUMonitor.jl.git
+    Pkg.clone("git@github.com:klensink/CPUMonitor.jl.git")
 
 ## Example
 -----
